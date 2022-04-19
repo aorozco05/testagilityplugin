@@ -1,6 +1,7 @@
 import agility from "@agility/content-fetch";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import parse from "html-react-parser";
 
 interface MainContenteZone {
   item: any;
@@ -16,7 +17,13 @@ interface homePage {
 
 const home = () => {
   const [pageProperties, SetpageProperties] = useState<homePage>();
-  const img = pageProperties?.zones.MainContenteZone[0].item.fields.backgroundImage.url;
+  const [imgUrl, SetimgUrl] = useState<any>("");
+
+  const RenderHTML = (element : string) => {
+    return parse(element);
+   
+  };
+
   useEffect(function () {
     const agilityClient = agility.getApi({
       guid: "d48f2f7d-u",
@@ -29,21 +36,25 @@ const home = () => {
         locale: "en-us",
       })
       .then(function (properties) {
-		  console.log(properties)
+        console.log(properties);
         SetpageProperties(properties);
-	
+        SetimgUrl(
+          properties.zones.MainContenteZone[0].item.fields.backgroundImage.url
+        );
+       
       });
   }, []);
 
   return (
     <div>
-		 <h1>{pageProperties?.zones.MainContenteZone[0].item.fields.ladingTitle}</h1>
-      {pageProperties?.zones.MainContenteZone[0].item.fields.description}
-      <img
-        src={img}
-        className={"image"}
-		width={376} height={190} 
-      />
+      <h1>
+        {pageProperties?.zones.MainContenteZone[0].item.fields.ladingTitle}
+      </h1>
+      <div id="descriptionContent"></div>
+     {pageProperties && RenderHTML(pageProperties?.zones.MainContenteZone[0].item.fields.description)}
+      {imgUrl && (
+        <Image src={imgUrl} layout="responsive" width={460} height={460} />
+      )}
     </div>
   );
 };

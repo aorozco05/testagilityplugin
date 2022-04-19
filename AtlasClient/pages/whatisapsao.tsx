@@ -1,6 +1,7 @@
 import agility from "@agility/content-fetch";
 import { useEffect, useState } from "react";
-import Image from "next/image";
+import parse from "html-react-parser";
+import ReactPlayer from "react-player";
 
 interface MainContenteZone {
   item: any;
@@ -28,17 +29,30 @@ const whatisapsao = () => {
         locale: "en-us",
       })
       .then(function (properties) {
-		  console.log(properties)
+        console.log(properties);
         SetpageProperties(properties);
-	
       });
   }, []);
- 
 
   return (
     <div>
-     	 <h1>{pageProperties?.zones.MainContenteZone[0].item.fields.ladingTitle}</h1>
-          {pageProperties?.zones.MainContenteZone[0].item.fields.description}
+      <h1>
+        {pageProperties?.zones.MainContenteZone[0].item.fields.ladingTitle}
+      </h1>
+      {pageProperties &&
+        parse(
+          pageProperties?.zones.MainContenteZone[0].item.fields.description
+        )}
+      {pageProperties && (
+        <ReactPlayer url="https://www.youtube.com/watch?v=vKKu-Wt7O2Q" />
+      )}
+       <h1>
+        {pageProperties?.zones.MainContenteZone[2].item.fields.title}
+      </h1>
+      {pageProperties &&
+        parse(pageProperties?.zones.MainContenteZone[2].item.fields.description)}
+      {pageProperties &&
+        parse(pageProperties?.zones.MainContenteZone[2].item.fields.htmlForm)}
     </div>
   );
 };
