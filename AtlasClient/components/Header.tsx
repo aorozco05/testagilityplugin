@@ -1,4 +1,4 @@
-import agility from "@agility/content-fetch";
+import { getSiteMap } from "../api/agilityService";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
@@ -7,16 +7,7 @@ const Header = () => {
   const [open, setOpen] = useState(false);
 
   useEffect(function () {
-    const agilityClient = agility.getApi({
-      guid: "d48f2f7d-u",
-      apiKey:
-        "defaultlive.f5eb3711b584c45f1aa984a1791b3bb1d9a99e0a9f881f83324138c6cd847a68",
-    });
-    agilityClient
-      .getSitemapNested({
-        channelName: "website",
-        languageCode: "en-us",
-      })
+    getSiteMap()
       .then(function (pages) {
         setpageItems(pages);
       });

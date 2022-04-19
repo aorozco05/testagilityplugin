@@ -1,4 +1,4 @@
-import agility from "@agility/content-fetch";
+import { getPage, getContentList } from "../api/agilityService";
 import { useEffect, useState } from "react";
 import parse from "html-react-parser";
 import ReactPlayer from "react-player";
@@ -17,21 +17,16 @@ interface homePage {
 
 const whatisapsao = () => {
   const [pageProperties, SetpageProperties] = useState<homePage>();
+  const [urlvideo, Seturlvideo] = useState<String>("");
+
   useEffect(function () {
-    const agilityClient = agility.getApi({
-      guid: "d48f2f7d-u",
-      apiKey:
-        "defaultlive.f5eb3711b584c45f1aa984a1791b3bb1d9a99e0a9f881f83324138c6cd847a68",
+    getPage(3).then(function (properties) {
+      SetpageProperties(properties);
     });
-    agilityClient
-      .getPage({
-        pageID: 3,
-        locale: "en-us",
-      })
-      .then(function (properties) {
-        console.log(properties);
-        SetpageProperties(properties);
-      });
+
+    getContentList("whatisapsao_videosection57_v61142f").then(function (videocontentList) {
+      Seturlvideo(videocontentList.items[0].fields.videoUrl.href);
+    });
   }, []);
 
   return (
@@ -43,14 +38,16 @@ const whatisapsao = () => {
         parse(
           pageProperties?.zones.MainContenteZone[0].item.fields.description
         )}
-      {pageProperties && (
-        <ReactPlayer url="https://www.youtube.com/watch?v=vKKu-Wt7O2Q" />
+      {urlvideo && (
+        <video controls width="250">
+          <source src={urlvideo} type="video/webm" />
+        </video>
       )}
-       <h1>
-        {pageProperties?.zones.MainContenteZone[2].item.fields.title}
-      </h1>
+      <h1>{pageProperties?.zones.MainContenteZone[2].item.fields.title}</h1>
       {pageProperties &&
-        parse(pageProperties?.zones.MainContenteZone[2].item.fields.description)}
+        parse(
+          pageProperties?.zones.MainContenteZone[2].item.fields.description
+        )}
       {pageProperties &&
         parse(pageProperties?.zones.MainContenteZone[2].item.fields.htmlForm)}
     </div>
